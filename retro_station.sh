@@ -57,6 +57,7 @@ RS_USR_CONF_OVR_FILE="$RS_USR_DIR/.$RS_CONF_OVR_FILE"
 RS_FLAG_FILE="$RS_USR_DIR/.rs_flag"
 RA_AUTOCONFIG_DIR=".config/retroarch/autoconfig"
 RA_CONF_FILE=".config/retroarch/retroarch.cfg"
+RA_LOG_FILE="$RS_USR_DIR/.retroarch.log"
 
 
 RA_AUTOCONFIG_URL="https://buildbot.libretro.com/assets/frontend/autoconfig.zip"
@@ -445,7 +446,7 @@ run() {
 	cd /home/$RS_USER
 	exit_code=1
 	while [ "$exit_code" -ne "0" ]; do
-		retroarch --appendconfig=$RS_USR_CONF_OVR_FILE >> retroarch.log 2>&1
+		retroarch --appendconfig=$RS_USR_CONF_OVR_FILE >> $RA_LOG_FILE 2>&1
 		exit_code=$?
 		if [ -f $RS_FLAG_FILE ]; then
 			read -r flag < $RS_FLAG_FILE
