@@ -71,6 +71,9 @@ RS_FLAG_KILL="3"
 INSTALL_PATH=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 
+if [ -f $RS_USR_FILE ]; then
+	read -r RS_USER < $RS_USR_FILE
+fi
 
 
 installRS() {
