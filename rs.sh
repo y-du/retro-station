@@ -373,7 +373,7 @@ updateRS() {
 			if [ "$input" == "y" ]; then
 				cd $INSTALL_PATH
 				git pull
-				cd $USER
+				cd /home/$USER
 				echo $RS_FLAG_REBOOT > $RS_FLAG_FILE
 				echo -e "\nquit retroarch for changes to take effect\n"
 				break
@@ -398,7 +398,7 @@ updateOS() {
 		if [ "$input" == "y" ] || [ "$input" == "n" ]; then
 			if [ "$input" == "y" ]; then
 				pacman -Syu
-				cd $USER
+				cd /home/$USER
 				echo $RS_FLAG_REBOOT > $RS_FLAG_FILE
 				echo -e "\nquit retroarch for changes to take effect\n"
 				break
