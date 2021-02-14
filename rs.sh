@@ -361,6 +361,10 @@ killRA() {
 
 
 updateRS() {
+	if [ "$EUID" -ne "0" ]; then
+		echo -e "${LIGHT_RED}update-rs must be run as root${NOCOLOR}"
+		exit 1
+	fi
 	clear
 	while true; do
 		echo -n -e "update retro-station? (y/n): "
@@ -368,15 +372,10 @@ updateRS() {
 		if [ "$input" == "y" ] || [ "$input" == "n" ]; then
 			if [ "$input" == "y" ]; then
 				cd $INSTALL_PATH
-				su
-				if git pull; then
-					logout
-					cd
-					echo $RS_FLAG_REBOOT > $RS_FLAG_FILE
-					echo -e "\nquit retroarch for changes to take effect\n"
-				else
-					exit 1
-				fi
+				git pull
+				cd /home/$USER
+				echo $RS_FLAG_REBOOT > $RS_FLAG_FILE
+				echo -e "\nquit retroarch for changes to take effect\n"
 				break
 			else
 				exit 0
