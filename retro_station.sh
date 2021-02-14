@@ -52,7 +52,6 @@ RS_USR_SCRNSHTS_DIR="$RS_USR_DIR/screenshots"
 RS_USR_STATES_DIR="$RS_USR_DIR/states"
 RS_USR_CORES_DIR="$RS_USR_DIR/cores"
 RS_USR_SYS_DIR="$RS_USR_DIR/system"
-RS_USR_GAMES_DIR="$RS_USR_DIR/games"
 RS_USR_CONF_OVR_FILE="$RS_USR_DIR/.$RS_CONF_OVR_FILE"
 RS_FLAG_FILE="$RS_USR_DIR/.rs_flag"
 RA_AUTOCONFIG_DIR=".config/retroarch/autoconfig"
@@ -115,7 +114,6 @@ installRS() {
 	su -c "mkdir -p -v /home/$RS_USER/$RS_USR_STATES_DIR" $RS_USER && \
 	su -c "mkdir -p -v /home/$RS_USER/$RS_USR_CORES_DIR" $RS_USER && \
 	su -c "mkdir -p -v /home/$RS_USER/$RS_USR_SYS_DIR" $RS_USER && \
-	su -c "mkdir -p -v /home/$RS_USER/$RS_USR_GAMES_DIR" $RS_USER && \
 	su -c "mkdir -p -v /home/$RS_USER/$RA_AUTOCONFIG_DIR" $RS_USER
 	if [ "$?" -ne "0" ]; then
 		exit 1
