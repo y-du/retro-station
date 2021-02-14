@@ -390,30 +390,6 @@ updateRS() {
 }
 
 
-updateOS() {
-	if [ "$EUID" -ne "0" ]; then
-		echo -e "${LIGHT_RED}update-os must be run as root${NOCOLOR}"
-		exit 1
-	fi
-	clear
-	while true; do
-		echo -n -e "update OS? (y/n): "
-		read input
-		if [ "$input" == "y" ] || [ "$input" == "n" ]; then
-			if [ "$input" == "y" ]; then
-				pacman -Syu
-				cd /home/$USER
-				echo $RS_FLAG_REBOOT > $RS_FLAG_FILE
-				echo -e "\nquit retroarch for changes to take effect\n"
-				break
-			else
-				exit 0
-			fi
-		fi
-	done
-}
-
-
 printVersion() {
 	cd $INSTALL_PATH
 	git log -1
@@ -485,7 +461,6 @@ printHelp() {
 	echo "   kill-ra         kill the retroarch process"
 	echo "   set-firewall    enable or disable firewall (requires root privileges)"
 	echo "   update          update retro-station (requires root privileges)"
-	echo "   update-os       update OS (requires root privileges)"
 	echo "   version         show current version"
 	echo -e "   -h --help       show this help\n"
 }
@@ -524,9 +499,6 @@ else
 			;;
 		"update")
 			updateRS
-			;;
-		"update-os")
-			updateOS
 			;;
 		"version")
 			printVersion
