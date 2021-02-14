@@ -154,7 +154,7 @@ installRS() {
 		exit 1
 	fi
 	echo "create override config file ..."
-	if ! su -c "printf '%s\n' "$RS_CONF_OVR" > /home/$RS_USER/$RS_USR_CONF_OVR_FILE" $RS_USER; then
+	if ! su -c "printf '%s\n' \"$RS_CONF_OVR\" > /home/$RS_USER/$RS_USR_CONF_OVR_FILE" $RS_USER; then
 		exit 1
 	fi
 	echo "add global alias ..."
