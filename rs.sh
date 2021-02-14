@@ -80,7 +80,7 @@ installRS() {
 		fi
 	done
 	echo "set retro-station user: $RS_USER"
-	echo $RS_USER > $INSTALL_PATH/$RS_USR_FILE
+	echo $RS_USER > /opt/$RS_USR_FILE
 	echo "install retroarch and dependencies ..."
 	while true; do
 		pacman -S --noconfirm retroarch retroarch-assets-glui retroarch-assets-ozone retroarch-assets-xmb libbluray libglvnd alsa-utils libxinerama libxrandr rxvt-unicode-terminfo polkit unzip ufw
@@ -376,7 +376,7 @@ updateRS() {
 		if [ "$input" == "y" ] || [ "$input" == "n" ]; then
 			if [ "$input" == "y" ]; then
 				cd $INSTALL_PATH
-				read -r rs_usr < $RS_USR_FILE
+				read -r rs_usr < /opt/$RS_USR_FILE
 				if git pull; then
 					su -c "echo $RS_FLAG_REBOOT > /home/$rs_usr/$RS_FLAG_FILE" $rs_usr
 					echo -e "\nquit retroarch for changes to take effect\n"
