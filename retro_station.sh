@@ -478,7 +478,7 @@ printHelp() {
 	echo "   core-source     set source for downloading cores"
 	echo "   kill-ra         kill the retroarch process"
 	echo "   set-firewall    enable or disable firewall (requires root privileges)"
-	echo "   update-rs       update retro-station (requires root privileges)"
+	echo "   update          update retro-station (requires root privileges)"
 	echo "   update-os       update OS (requires root privileges)"
 	echo -e "   -h --help       show this help\n"
 }
@@ -515,7 +515,7 @@ else
 		"kill-ra")
 			killRA
 			;;
-		"update-rs")
+		"update")
 			updateRS
 			;;
 		"update-os")
