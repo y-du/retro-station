@@ -79,7 +79,8 @@ installRS() {
 	echo "retro-station user: $RS_USER"
 	echo "install retroarch and dependencies ..."
 	while true; do
-		if ! pacman -S --noconfirm retroarch retroarch-assets-glui retroarch-assets-ozone retroarch-assets-xmb libbluray libglvnd alsa-utils libxinerama libxrandr rxvt-unicode-terminfo polkit unzip ufw ntp; then
+		pacman -S --noconfirm retroarch retroarch-assets-glui retroarch-assets-ozone retroarch-assets-xmb libbluray libglvnd alsa-utils libxinerama libxrandr rxvt-unicode-terminfo polkit unzip ufw
+		if [ "$?" -eq "0" ]; then
 			break
 		fi
 		sleep 5
