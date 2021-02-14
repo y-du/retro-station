@@ -395,10 +395,19 @@ updateRS() {
 		if [ "$input" == "y" ] || [ "$input" == "n" ]; then
 			if [ "$input" == "y" ]; then
 				cd $INSTALL_PATH
-				read -r rs_usr < /opt/$RS_USR_FILE
-				if git pull; then
-					su -c "echo $RS_FLAG_REBOOT > /home/$rs_usr/$RS_FLAG_FILE" $rs_usr
-					echo -e "\nquit retroarch for changes to take effect\n"
+				update_result=$(git remote update 3>&1 1>&2 2>&3 >/dev/null)
+				if ! [[ $update_result = *"fatal"* ]] || ! [[ $update_result = *"error"* ]]; then
+        			status_result=$(git status)
+        			if [[ $status_result = *"behind"* ]]; then
+						if git pull; then
+							su -c "echo $RS_FLAG_REBOOT > /home/$RS_USER/$RS_FLAG_FILE" $RS_USER
+							echo -e "\nquit retroarch for changes to take effect\n"
+						fi
+					else
+						echo "at latest version"
+					fi
+				else
+					echo -e "${LIGHT_RED}checking for updates failed${NOCOLOR}"
 				fi
 				break
 			else
