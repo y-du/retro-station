@@ -117,7 +117,7 @@ installRS() {
 		exit 1
 	fi
 	echo "add global alias ..."
-	if ! echo -e "\nalias retro-station=$INSTALL_PATH/rs.sh" >> /etc/bash.bashrc; then
+	if ! echo -e "\nalias retro-station=$INSTALL_PATH/retro_station.sh" >> /etc/bash.bashrc; then
 		exit 1
 	fi
 	echo "create retroarch service ..."
@@ -130,7 +130,7 @@ User=$RS_USER
 Group=$RS_USER
 PAMName=login
 TTYPath=/dev/tty1
-ExecStart=$INSTALL_PATH/rs.sh run
+ExecStart=$INSTALL_PATH/retro_station.sh run
 StandardInput=tty
 
 [Install]
