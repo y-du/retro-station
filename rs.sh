@@ -377,7 +377,7 @@ updateRS() {
 			if [ "$input" == "y" ]; then
 				cd $INSTALL_PATH
 				read -r rs_usr < $RS_USR_FILE
-				if git pull;
+				if git pull; then
 					su -c "echo $RS_FLAG_REBOOT > /home/$rs_usr/$RS_FLAG_FILE" $rs_usr
 					echo -e "\nquit retroarch for changes to take effect\n"
 				fi
