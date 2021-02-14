@@ -51,6 +51,9 @@ RS_FLAG_RST_CONF="2"
 RS_FLAG_KILL="3"
 
 
+RS_USR_FILE=".rs_usr"
+
+
 INSTALL_PATH=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 
@@ -76,7 +79,8 @@ installRS() {
 			break
 		fi
 	done
-	echo "retro-station user: $RS_USER"
+	echo "set retro-station user: $RS_USER"
+	echo $RS_USER > $INSTALL_PATH/$RS_USR_FILE
 	echo "install retroarch and dependencies ..."
 	while true; do
 		pacman -S --noconfirm retroarch retroarch-assets-glui retroarch-assets-ozone retroarch-assets-xmb libbluray libglvnd alsa-utils libxinerama libxrandr rxvt-unicode-terminfo polkit unzip ufw
@@ -372,10 +376,11 @@ updateRS() {
 		if [ "$input" == "y" ] || [ "$input" == "n" ]; then
 			if [ "$input" == "y" ]; then
 				cd $INSTALL_PATH
-				git pull
-				cd /home/$USER
-				echo $RS_FLAG_REBOOT > $RS_FLAG_FILE
-				echo -e "\nquit retroarch for changes to take effect\n"
+				read -r rs_usr < $RS_USR_FILE
+				if git pull;
+					su -c "echo $RS_FLAG_REBOOT > /home/$rs_usr/$RS_FLAG_FILE" $rs_usr
+					echo -e "\nquit retroarch for changes to take effect\n"
+				fi
 				break
 			else
 				exit 0
@@ -383,7 +388,6 @@ updateRS() {
 		fi
 	done
 }
-
 
 
 updateOS() {
