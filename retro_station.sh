@@ -44,17 +44,33 @@ HAS_THROTTLED=0x40000
 HAS_SOFT_TEMPLIMIT=0x80000
 
 
-RS_FLAG_FILE=".rs_flag"
+RS_CONF_OVR_FILE="override.cfg"
+RS_USR_FILE="/opt/rs_usr"
+RS_USR_DIR="retro-station"
+RS_USR_SAVES_DIR="$RS_USR_DIR/saves"
+RS_USR_SCRNSHTS_DIR="$RS_USR_DIR/screenshots"
+RS_USR_STATES_DIR="$RS_USR_DIR/states"
+RS_USR_CORES_DIR="$RS_USR_DIR/cores"
+RS_USR_SYS_DIR="$RS_USR_DIR/system"
+RS_USR_GAMES_DIR="$RS_USR_DIR/games"
+RS_USR_CONF_OVR_FILE="$RS_USR_DIR/.$RS_CONF_OVR_FILE"
+RS_FLAG_FILE="$RS_USR_DIR/.rs_flag"
+RA_AUTOCONFIG_DIR=".config/retroarch/autoconfig"
+RA_CONF_FILE=".config/retroarch/retroarch.cfg"
+
+
+RA_AUTOCONFIG_URL="https://buildbot.libretro.com/assets/frontend/autoconfig.zip"
+
+
 RS_FLAG_RESTART="0"
 RS_FLAG_REBOOT="1"
 RS_FLAG_RST_CONF="2"
 RS_FLAG_KILL="3"
 
 
-RS_USR_FILE=".rs_usr"
-
-
 INSTALL_PATH=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+
 
 
 installRS() {
@@ -80,7 +96,7 @@ installRS() {
 		fi
 	done
 	echo "set retro-station user: $RS_USER"
-	echo $RS_USER > /opt/$RS_USR_FILE
+	echo $RS_USER > $RS_USR_FILE
 	echo "install retroarch and dependencies ..."
 	while true; do
 		pacman -S --noconfirm retroarch retroarch-assets-glui retroarch-assets-ozone retroarch-assets-xmb libbluray libglvnd alsa-utils libxinerama libxrandr rxvt-unicode-terminfo polkit unzip ufw
@@ -90,19 +106,19 @@ installRS() {
 		sleep 5
 	done
 	echo "create directories ..."
-	su -c "mkdir -p -v /home/$RS_USER/saves" $RS_USER && \
-	su -c "mkdir -p -v /home/$RS_USER/screenshots" $RS_USER && \
-	su -c "mkdir -p -v /home/$RS_USER/states" $RS_USER && \
-	su -c "mkdir -p -v /home/$RS_USER/cores" $RS_USER && \
-	su -c "mkdir -p -v /home/$RS_USER/system" $RS_USER && \
-	su -c "mkdir -p -v /home/$RS_USER/games" $RS_USER && \
-	su -c "mkdir -p -v /home/$RS_USER/.config/retroarch/autoconfig" $RS_USER
+	su -c "mkdir -p -v /home/$RS_USER/$RS_USR_SAVES_DIR" $RS_USER && \
+	su -c "mkdir -p -v /home/$RS_USER/$RS_USR_SCRNSHTS_DIR" $RS_USER && \
+	su -c "mkdir -p -v /home/$RS_USER/$RS_USR_STATES_DIR" $RS_USER && \
+	su -c "mkdir -p -v /home/$RS_USER/$RS_USR_CORES_DIR" $RS_USER && \
+	su -c "mkdir -p -v /home/$RS_USER/$RS_USR_SYS_DIR" $RS_USER && \
+	su -c "mkdir -p -v /home/$RS_USER/$RS_USR_GAMES_DIR" $RS_USER && \
+	su -c "mkdir -p -v /home/$RS_USER/$RA_AUTOCONFIG_DIR" $RS_USER
 	if [ "$?" -ne "0" ]; then
 		exit 1
 	fi
 	echo "download assets ..."
 	while true; do
-		su -c "curl https://buildbot.libretro.com/assets/frontend/autoconfig.zip -o /tmp/autoconfig.zip" $RS_USER
+		su -c "curl $RA_AUTOCONFIG_URL -o /tmp/autoconfig.zip" $RS_USER
 		if [ "$?" -eq "0" ]; then
 			break
 		fi
@@ -110,8 +126,8 @@ installRS() {
 		sleep 5
 	done
 	echo "copy files ..."
-	su -c "cp -v override.cfg /home/$RS_USER/.override.cfg" $RS_USER && \
-	su -c "unzip /tmp/autoconfig.zip -d /home/$RS_USER/.config/retroarch/autoconfig" $RS_USER && \
+	su -c "cp -v $INSTALL_PATH/$RS_CONF_OVR_FILE /home/$RS_USER/$RS_USR_CONF_OVR_FILE" $RS_USER && \
+	su -c "unzip /tmp/autoconfig.zip -d /home/$RS_USER/$RA_AUTOCONFIG_DIR" $RS_USER && \
 	rm -f /tmp/autoconfig.zip && \
 	if [ "$?" -ne "0" ]; then
 		exit 1
@@ -236,10 +252,10 @@ setAudioCard() {
 			echo -e "${LIGHT_RED}invalid input '$device'${NOCOLOR}\n"
 		fi
 	done
-	if grep -q "audio_device" .override.cfg; then
-		sed -i -r 's/^audio_device = .*/audio_device = "hw:'$card','$device'"/' .override.cfg
+	if grep -q "audio_device" $RS_USR_CONF_OVR_FILE; then
+		sed -i -r 's/^audio_device = .*/audio_device = "hw:'$card','$device'"/' $RS_USR_CONF_OVR_FILE
 	else
-		echo 'audio_device = "hw:'$card','$device'"' >> .override.cfg
+		echo 'audio_device = "hw:'$card','$device'"' >> $RS_USR_CONF_OVR_FILE
 	fi
 	echo $RS_FLAG_RESTART > $RS_FLAG_FILE
 	echo -e "\nquit retroarch for changes to take effect\n"
@@ -264,7 +280,7 @@ setAudioDriver() {
 			echo -e "${LIGHT_RED}invalid input '$driver'${NOCOLOR}\n"
 		fi
 	done
-	sed -i -r 's/^audio_driver = .*/audio_driver = "'$driver'"/' .override.cfg
+	sed -i -r 's/^audio_driver = .*/audio_driver = "'$driver'"/' $RS_USR_CONF_OVR_FILE
 	echo $RS_FLAG_RESTART > $RS_FLAG_FILE
 	echo -e "\nquit retroarch for changes to take effect\n"
 }
@@ -326,14 +342,14 @@ resetConfig() {
 
 setCoreSrc() {
 	clear
-	cd
-	curr_src=$(grep "core_updater_buildbot_cores_url" .override.cfg | cut -d'"' -f 2)
+	cd /home/$RS_USER
+	curr_src=$(grep "core_updater_buildbot_cores_url" $RS_USR_CONF_OVR_FILE | cut -d'"' -f 2)
 	echo -e "\nactive: $curr_src\n"
 	while true; do
 		read -e -p "enter new source: " src
 		if [ "$src" != "" ]; then
 			exc_src=$(printf '%s\n' "$src" | sed -e 's/[\/&]/\\&/g')
-			sed -i -r 's/^core_updater_buildbot_cores_url = .*/core_updater_buildbot_cores_url = "'$exc_src'"/' .override.cfg
+			sed -i -r 's/^core_updater_buildbot_cores_url = .*/core_updater_buildbot_cores_url = "'$exc_src'"/' $RS_USR_CONF_OVR_FILE
 			break
 		else
 			echo -e "${LIGHT_RED}invalid input '$src'${NOCOLOR}\n"
@@ -417,7 +433,7 @@ run() {
 	cd
 	exit_code=1
 	while [ "$exit_code" -ne "0" ]; do
-		retroarch --appendconfig=.override.cfg >> retroarch.log 2>&1
+		retroarch --appendconfig=$RS_USR_CONF_OVR_FILE >> retroarch.log 2>&1
 		exit_code=$?
 		if [ -f $RS_FLAG_FILE ]; then
 			read -r flag < $RS_FLAG_FILE
@@ -427,8 +443,8 @@ run() {
 			elif [ "$flag" == $RS_FLAG_REBOOT ]; then
 				systemctl reboot
 			elif [ "$flag" == $RS_FLAG_RST_CONF ]; then
-				cp $INSTALL_PATH/override.cfg .override.cfg
-				rm .config/retroarch/retroarch.cfg
+				cp $INSTALL_PATH/$RS_CONF_OVR_FILE $RS_USR_CONF_OVR_FILE
+				rm $RA_CONF_FILE
 				exit_code=1
 			elif [ "$flag" == $RS_FLAG_KILL ]; then
 				exit_code=1
