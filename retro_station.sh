@@ -44,7 +44,6 @@ HAS_THROTTLED=0x40000
 HAS_SOFT_TEMPLIMIT=0x80000
 
 
-RS_CONF_OVR_FILE="override.cfg"
 RS_USR_FILE="/opt/rs_usr"
 RS_USR_DIR="retro-station"
 RS_USR_SAVES_DIR="$RS_USR_DIR/saves"
@@ -52,7 +51,7 @@ RS_USR_SCRNSHTS_DIR="$RS_USR_DIR/screenshots"
 RS_USR_STATES_DIR="$RS_USR_DIR/states"
 RS_USR_CORES_DIR="$RS_USR_DIR/cores"
 RS_USR_SYS_DIR="$RS_USR_DIR/system"
-RS_USR_CONF_OVR_FILE="$RS_USR_DIR/.$RS_CONF_OVR_FILE"
+RS_USR_CONF_OVR_FILE="$RS_USR_DIR/.override.cfg"
 RS_FLAG_FILE="$RS_USR_DIR/.rs_flag"
 RA_AUTOCONFIG_DIR=".config/retroarch/autoconfig"
 RA_CONF_FILE=".config/retroarch/retroarch.cfg"
@@ -66,6 +65,27 @@ RS_FLAG_RESTART="0"
 RS_FLAG_REBOOT="1"
 RS_FLAG_RST_CONF="2"
 RS_FLAG_KILL="3"
+
+
+RS_CONF_OVR='ai_service_enable = "false"
+audio_driver = "alsa"
+camera_driver = "null"
+core_updater_buildbot_cores_url = "http://buildbot.libretro.com/nightly/linux/armv7-neon-hf/latest/"
+desktop_menu_enable = "false"
+input_driver = "udev"
+input_joypad_driver = "udev"
+libretro_directory = "~/'$RS_USR_CORES_DIR'"
+libretro_info_path = "~/.config/retroarch/cores/info"
+menu_show_core_updater = "true"
+netplay_public_announce = "false"
+savefile_directory = "~/'$RS_USR_SAVES_DIR'"
+savestate_directory = "~/'$RS_USR_STATES_DIR'"
+screenshot_directory = "~/'$RS_USR_SCRNSHTS_DIR'"
+suspend_screensaver_enable = "false"
+system_directory = "~/'$RS_USR_SYS_DIR'"
+video_fullscreen = "true"
+video_shader_dir = "~/.config/retroarch/shaders"
+video_windowed_fullscreen = "false"'
 
 
 INSTALL_PATH=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
@@ -127,11 +147,14 @@ installRS() {
 		rm -f /tmp/autoconfig.zip
 		sleep 5
 	done
-	echo "copy files ..."
-	su -c "cp -v $INSTALL_PATH/$RS_CONF_OVR_FILE /home/$RS_USER/$RS_USR_CONF_OVR_FILE" $RS_USER && \
+	echo "install assets ..."
 	su -c "unzip /tmp/autoconfig.zip -d /home/$RS_USER/$RA_AUTOCONFIG_DIR" $RS_USER && \
 	rm -f /tmp/autoconfig.zip && \
 	if [ "$?" -ne "0" ]; then
+		exit 1
+	fi
+	echo "create override config file ..."
+	if ! su -c "printf '%s\n' "$RS_CONF_OVR" > /home/$RS_USER/$RS_USR_CONF_OVR_FILE" $RS_USER; then
 		exit 1
 	fi
 	echo "add global alias ..."
@@ -454,7 +477,7 @@ run() {
 			elif [ "$flag" == $RS_FLAG_REBOOT ]; then
 				systemctl reboot
 			elif [ "$flag" == $RS_FLAG_RST_CONF ]; then
-				cp $INSTALL_PATH/$RS_CONF_OVR_FILE $RS_USR_CONF_OVR_FILE
+				printf '%s\n' "$RS_CONF_OVR" > $RS_USR_CONF_OVR_FILE
 				rm $RA_CONF_FILE
 				exit_code=1
 			elif [ "$flag" == $RS_FLAG_KILL ]; then
