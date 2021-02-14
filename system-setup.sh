@@ -112,14 +112,16 @@ fi
 
 echo "init pacman ..."
 while true; do
-	if ! pacman-key --init; then
+	pacman-key --init
+	if [ "$?" -eq "0" ]; then
 		break
 	fi
 	sleep 5
 done
 
 while true; do
-	if ! pacman-key --populate archlinuxarm; then
+	pacman-key --populate archlinuxarm
+	if [ "$?" -eq "0" ]; then
 		break
 	fi
 	sleep 5
@@ -127,7 +129,7 @@ done
 
 echo "update system ..."
 while true; do
-	pacman -S --noconfirm retroarch retroarch-assets-glui retroarch-assets-ozone retroarch-assets-xmb libbluray libglvnd alsa-utils libxinerama libxrandr rxvt-unicode-terminfo polkit unzip ufw
+	pacman -Syu --noconfirm
 	if [ "$?" -eq "0" ]; then
 		break
 	fi
