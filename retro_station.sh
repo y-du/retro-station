@@ -228,7 +228,7 @@ setFirewall() {
 
 setAudioCard() {
 	clear
-	cd
+	cd /home/$RS_USER
 	aplay -l | grep "card"
 	echo ""
 	while true; do
@@ -267,7 +267,7 @@ setAudioCard() {
 
 setAudioDriver() {
 	clear
-	cd
+	cd /home/$RS_USER
 	echo -e "0: alsa\n1: alsathread\n"
 	while true; do
 		echo -n -e "choose driver (default 0): "
@@ -326,7 +326,7 @@ hwMonitor() {
 
 resetConfig() {
 	clear
-	cd
+	cd /home/$RS_USER
 	while true; do
 		echo -n -e "reset retroarch configuartion? (y/n): "
 		read input
@@ -365,7 +365,7 @@ setCoreSrc() {
 
 killRA() {
 	clear
-	cd
+	cd /home/$RS_USER
 	echo -e "${LIGHT_RED}only use this option if retroarch is not responding${NOCOLOR}\n"
 	while true; do
 		echo -n -e "kill retroarch process? (y/n): "
@@ -433,7 +433,7 @@ run() {
 	echo -e "\n${LIGHT_GREEN}starting retroarch ...${NOCOLOR}"
 	#amixer -q -c 0 cset numid=1 85%
 	#amixer -q -c 1 cset numid=1 85%
-	cd
+	cd /home/$RS_USER
 	exit_code=1
 	while [ "$exit_code" -ne "0" ]; do
 		retroarch --appendconfig=$RS_USR_CONF_OVR_FILE >> retroarch.log 2>&1
