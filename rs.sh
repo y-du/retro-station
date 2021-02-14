@@ -92,20 +92,11 @@ installRS() {
 	su -c "mkdir -p -v /home/$RS_USER/cores" $RS_USER && \
 	su -c "mkdir -p -v /home/$RS_USER/system" $RS_USER && \
 	su -c "mkdir -p -v /home/$RS_USER/games" $RS_USER && \
-	su -c "mkdir -p -v /home/$RS_USER/.config/retroarch/autoconfig" $RS_USER && \
-	su -c "mkdir -p -v /home/$RS_USER/.config/retroarch/cores/info" $RS_USER
+	su -c "mkdir -p -v /home/$RS_USER/.config/retroarch/autoconfig" $RS_USER
 	if [ "$?" -ne "0" ]; then
 		exit 1
 	fi
 	echo "download assets ..."
-	while true; do
-		su -c "curl https://buildbot.libretro.com/assets/frontend/info.zip -o /tmp/info.zip" $RS_USER
-		if [ "$?" -eq "0" ]; then
-			break
-		fi
-		rm -f /tmp/info.zip
-		sleep 5
-	done
 	while true; do
 		su -c "curl https://buildbot.libretro.com/assets/frontend/autoconfig.zip -o /tmp/autoconfig.zip" $RS_USER
 		if [ "$?" -eq "0" ]; then
@@ -117,14 +108,12 @@ installRS() {
 	echo "copy files ..."
 	su -c "cp -v override.cfg /home/$RS_USER/.override.cfg" $RS_USER && \
 	su -c "unzip /tmp/autoconfig.zip -d /home/$RS_USER/.config/retroarch/autoconfig" $RS_USER && \
-	su -c "unzip /tmp/info.zip -d /home/$RS_USER/.config/retroarch/cores/info" $RS_USER && \
 	rm -f /tmp/autoconfig.zip && \
-	rm -f /tmp/info.zip
 	if [ "$?" -ne "0" ]; then
 		exit 1
 	fi
 	echo "add global alias ..."
-	if ! echo "alias retro-station=$INSTALL_PATH/rs.sh" >> /etc/bash.bashrc; then
+	if ! echo -e "\nalias retro-station=$INSTALL_PATH/rs.sh" >> /etc/bash.bashrc; then
 		exit 1
 	fi
 	echo "create retroarch service ..."
