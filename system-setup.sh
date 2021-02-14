@@ -127,7 +127,8 @@ done
 
 echo "update system ..."
 while true; do
-	if ! pacman -Syu --noconfirm; then
+	pacman -S --noconfirm retroarch retroarch-assets-glui retroarch-assets-ozone retroarch-assets-xmb libbluray libglvnd alsa-utils libxinerama libxrandr rxvt-unicode-terminfo polkit unzip ufw
+	if [ "$?" -eq "0" ]; then
 		break
 	fi
 	sleep 5
