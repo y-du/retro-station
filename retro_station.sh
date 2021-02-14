@@ -414,6 +414,12 @@ updateOS() {
 }
 
 
+printVersion() {
+	cd $INSTALL_PATH
+	git log -1
+}
+
+
 printLogo() {
 	printf '\n\n'$LIGHT_MAGENTA'%s'$NOCOLOR'\n' "                   __                                   __             __                            "
 	printf $LIGHT_RED'%s'$NOCOLOR'\n' "                  /\\ \\__                               /\\ \\__         /\\ \\__  __                     "
@@ -480,6 +486,7 @@ printHelp() {
 	echo "   set-firewall    enable or disable firewall (requires root privileges)"
 	echo "   update          update retro-station (requires root privileges)"
 	echo "   update-os       update OS (requires root privileges)"
+	echo "   version         show current version"
 	echo -e "   -h --help       show this help\n"
 }
 
@@ -520,6 +527,9 @@ else
 			;;
 		"update-os")
 			updateOS
+			;;
+		"version")
+			printVersion
 			;;
 		"-h")
 			printHelp
