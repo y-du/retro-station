@@ -122,7 +122,7 @@ installRS() {
 	echo $RS_USER > $RS_USR_FILE
 	echo "install retroarch and dependencies ..."
 	while true; do
-		pacman -S --needed --noconfirm retroarch retroarch-assets-glui retroarch-assets-ozone retroarch-assets-xmb libbluray libglvnd alsa-utils libxinerama libxrandr rxvt-unicode-terminfo polkit unzip ufw
+		pacman -S --needed --noconfirm retroarch retroarch-assets-glui retroarch-assets-ozone retroarch-assets-xmb libbluray libglvnd alsa-utils libxinerama libxrandr rxvt-unicode-terminfo polkit unzip ufw ntp
 		if [ "$?" -eq "0" ]; then
 			break
 		fi
