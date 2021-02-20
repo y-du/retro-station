@@ -462,8 +462,6 @@ run() {
 	printLogo
 	sleep 3
 	echo -e "\n${LIGHT_GREEN}starting retroarch ...${NOCOLOR}"
-	#amixer -q -c 0 cset numid=1 85%
-	#amixer -q -c 1 cset numid=1 85%
 	cd /home/$RS_USER
 	exit_code=1
 	while [ "$exit_code" -ne "0" ]; do
