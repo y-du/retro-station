@@ -52,6 +52,7 @@ RS_USR_STATES_DIR="$RS_USR_DIR/states"
 RS_USR_CORES_DIR="$RS_USR_DIR/cores"
 RS_USR_SYS_DIR="$RS_USR_DIR/system"
 RS_USR_CONF_OVR_FILE="$RS_USR_DIR/.override.cfg"
+RS_USR_SCRIPT="$RS_USR_DIR/usr_script.sh"
 RS_FLAG_FILE="$RS_USR_DIR/.rs_flag"
 RA_AUTOCONFIG_DIR=".config/retroarch/autoconfig"
 RA_CONF_FILE=".config/retroarch/retroarch.cfg"
@@ -461,8 +462,16 @@ run() {
 	clear
 	printLogo
 	sleep 3
-	echo -e "\n${LIGHT_GREEN}starting retroarch ...${NOCOLOR}"
 	cd /home/$RS_USER
+	if [ -f $RS_USR_SCRIPT ]; then
+		if [ -x $RS_USR_SCRIPT ]; then
+			echo -e "\n${LIGHT_MAGENTA}executing user script ...${NOCOLOR}"
+			source ./$RS_USR_SCRIPT
+		else
+			echo -e "${LIGHT_RED}executing user script failed${NOCOLOR}"
+		fi
+	fi
+	echo -e "\n${LIGHT_GREEN}starting retroarch ...${NOCOLOR}"
 	exit_code=1
 	while [ "$exit_code" -ne "0" ]; do
 		retroarch --appendconfig=$RS_USR_CONF_OVR_FILE >> $RA_LOG_FILE 2>&1
