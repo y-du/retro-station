@@ -482,6 +482,10 @@ run() {
 			if [ "$flag" == $RS_FLAG_RESTART ]; then
 				exit_code=1
 			elif [ "$flag" == $RS_FLAG_REBOOT ]; then
+				echo -e "${LIGHT_CYAN}retroarch quit by user${NOCOLOR}"
+				echo -e "${LIGHT_BLUE}rebooting system ...${NOCOLOR}"
+				sleep 2
+				clear
 				systemctl reboot
 			elif [ "$flag" == $RS_FLAG_RST_CONF ]; then
 				printf '%s\n' "$RS_CONF_OVR" > $RS_USR_CONF_OVR_FILE
