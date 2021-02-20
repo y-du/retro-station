@@ -422,6 +422,8 @@ updateRS() {
         			status_result=$(git status)
         			if [[ $status_result = *"behind"* ]]; then
 						if git pull; then
+							chmod +x retro_station.sh
+							chmod +x system_setup.sh
 							su -c "echo $RS_FLAG_REBOOT > /home/$RS_USER/$RS_FLAG_FILE" $RS_USER
 							echo -e "\nquit retroarch for changes to take effect\n"
 						fi
