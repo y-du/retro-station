@@ -464,6 +464,8 @@ printVersion() {
 printLogo() {
 	echo
 	figlet -f $RS_LOGO_FONT -c -t -p retro-station | lolcat
+	echo
+	echo
 }
 
 
