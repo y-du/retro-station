@@ -45,6 +45,7 @@ HAS_SOFT_TEMPLIMIT=0x80000
 
 
 RS_USR_FILE="/opt/rs_usr"
+RS_LOGO_FONT="/opt/rs_logo.flf"
 RS_USR_DIR="retro-station"
 RS_USR_SAVES_DIR="$RS_USR_DIR/saves"
 RS_USR_SCRNSHTS_DIR="$RS_USR_DIR/screenshots"
@@ -60,6 +61,7 @@ RA_LOG_FILE="$RS_USR_DIR/.retroarch.log"
 
 
 RA_AUTOCONFIG_URL="https://buildbot.libretro.com/assets/frontend/autoconfig.zip"
+RS_LOGO_FONT_URL="https://raw.githubusercontent.com/xero/figlet-fonts/master/3d.flf"
 
 
 RS_FLAG_RESTART="0"
@@ -123,7 +125,7 @@ installRS() {
 	echo $RS_USER > $RS_USR_FILE
 	echo "install retroarch and dependencies ..."
 	while true; do
-		pacman -S --needed --noconfirm retroarch retroarch-assets-glui retroarch-assets-ozone retroarch-assets-xmb libbluray libglvnd alsa-utils libxinerama libxrandr rxvt-unicode-terminfo polkit unzip ufw ntp
+		pacman -S --needed --noconfirm retroarch retroarch-assets-glui retroarch-assets-ozone retroarch-assets-xmb libbluray libglvnd alsa-utils libxinerama libxrandr rxvt-unicode-terminfo polkit unzip ufw ntp figlet lolcat
 		if [ "$?" -eq "0" ]; then
 			break
 		fi
@@ -141,6 +143,14 @@ installRS() {
 	fi
 	echo "download assets ..."
 	while true; do
+		su -c "curl $RS_LOGO_FONT_URL -o /tmp/logo_font.flf" $RS_USER
+		if [ "$?" -eq "0" ]; then
+			break
+		fi
+		rm -f /tmp/logo_font.flf
+		sleep 5
+	done
+	while true; do
 		su -c "curl $RA_AUTOCONFIG_URL -o /tmp/autoconfig.zip" $RS_USER
 		if [ "$?" -eq "0" ]; then
 			break
@@ -149,6 +159,10 @@ installRS() {
 		sleep 5
 	done
 	echo "install assets ..."
+	cp /tmp/logo_font.flf $RS_LOGO_FONT && rm -f /tmp/logo_font.flf
+	if [ "$?" -ne "0" ]; then
+		exit 1
+	fi
 	su -c "unzip /tmp/autoconfig.zip -d /home/$RS_USER/$RA_AUTOCONFIG_DIR" $RS_USER && \
 	rm -f /tmp/autoconfig.zip && \
 	if [ "$?" -ne "0" ]; then
@@ -448,13 +462,7 @@ printVersion() {
 
 
 printLogo() {
-	printf '\n\n'$LIGHT_MAGENTA'%s'$NOCOLOR'\n' "                   __                                   __             __                            "
-	printf $LIGHT_RED'%s'$NOCOLOR'\n' "                  /\\ \\__                               /\\ \\__         /\\ \\__  __                     "
-	printf $LIGHT_YELLOW'%s'$NOCOLOR'\n' "        _ __    __\\ \\ ,_\\  _ __   ___              ____\\ \\ ,_\\    __  \\ \\ ,_\\/\\_\\    ___     ___     "
-	printf $LIGHT_GREEN'%s'$NOCOLOR'\n' "       /\\\`'__\\/'__\`\\ \\ \\/ /\\\`'__\\/ __\`\\  _______  /',__\\\\ \\ \\/  /'__\`\\ \\ \\ \\/\\/\\ \\  / __\`\\ /' _ \`\\   "
-	printf $LIGHT_CYAN'%s'$NOCOLOR'\n' "       \\ \\ \\//\\  __/\\ \\ \\_\\ \\ \\//\\ \\_\\ \\/\\______\\/\\__, \`\\\\ \\ \\_/\\ \\_\\.\\_\\ \\ \\_\\ \\ \\/\\ \\_\\ \\/\\ \\/\\ \\  "
-	printf $LIGHT_BLUE'%s'$NOCOLOR'\n' "        \\ \\_\\\\ \\____\\\\ \\__\\\\ \\_\\\\ \\____/\\/______/\\/\\____/ \\ \\__\\ \\__/.\\_\\\\ \\__\\\\ \\_\\ \\____/\\ \\_\\ \\_\\ "
-	printf $LIGHT_GRAY'%s'$NOCOLOR'\n\n\n' "         \\/_/ \\/____/ \\/__/ \\/_/ \\/___/           \\/___/   \\/__/\\/__/\\/_/ \\/__/ \\/_/\\/___/  \\/_/\\/_/ "
+	figlet -f $RS_LOGO_FONT -c -t -p retro-station | lolcat
 }
 
 
