@@ -143,7 +143,7 @@ installRS() {
 	fi
 	echo "download assets ..."
 	while true; do
-		su -c "curl $RS_LOGO_FONT_URL -o /tmp/logo_font.flf" $RS_USER
+		curl $RS_LOGO_FONT_URL -o /tmp/logo_font.flf
 		if [ "$?" -eq "0" ]; then
 			break
 		fi
@@ -462,6 +462,7 @@ printVersion() {
 
 
 printLogo() {
+	echo
 	figlet -f $RS_LOGO_FONT -c -t -p retro-station | lolcat
 }
 
